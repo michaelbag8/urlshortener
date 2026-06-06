@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	http.HandleFunc("GET /health", handleHealth)
+	http.HandleFunc("GET /health", healthHandler)
 	http.HandleFunc("POST /urls", createURLHandler)
 	http.HandleFunc("GET /{code}", redirectHandler)
 
