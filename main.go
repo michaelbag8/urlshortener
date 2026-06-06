@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 )
+var urlStore = map[string]URL{}
 
 func main() {
 	http.HandleFunc("GET /health", healthHandler)
