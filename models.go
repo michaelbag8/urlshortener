@@ -7,7 +7,6 @@ import (
 
 const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 
-var urlStore = map[string]URL{}
 
 type URL struct {
 	OriginalURL string
