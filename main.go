@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 )
 var urlStore = map[string]URL{}
@@ -15,8 +16,7 @@ func main() {
 
 	err := http.ListenAndServe(":8080", nil)
 	if err != nil {
-		fmt.Println("failed to start server")
-		return
+		log.Fatal(err)
 	}
 
 }
