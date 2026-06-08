@@ -5,7 +5,19 @@ import (
 	"log"
 	"net/http"
 	"time"
+	"math/rand"
 )
+
+const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+
+func generateShortCode() string {
+	code := make([]byte, 6)
+	for i := range code {
+		code[i] = charset[rand.Intn(len(charset))]
+	}
+	return string(code)
+}
+
 
 func createURLHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
@@ -33,7 +45,9 @@ func createURLHandler(w http.ResponseWriter, r *http.Request) {
 		ShortCode:   shortCode,
 	}
 
+	mu.Lock()
 	urlStore[shortCode] = result
+	mu.Unlock()
 
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(result)
@@ -43,13 +57,18 @@ func createURLHandler(w http.ResponseWriter, r *http.Request) {
 func redirectHandler(w http.ResponseWriter, r *http.Request) {
 	code := r.PathValue("code")
 
+	mu.RLock()
 	url, exist := urlStore[code]
+	mu.RUnlock()
 	if !exist {
 		http.Error(w, "Not Found", http.StatusNotFound)
 		return
 	}
+
+	mu.Lock()
 	url.Clicks++
 	urlStore[code] = url
+	mu.Unlock()
 
 	http.Redirect(w, r, url.OriginalURL, http.StatusFound)
 }
