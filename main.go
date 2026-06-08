@@ -4,8 +4,15 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"sync"
 )
-var urlStore = map[string]URL{}
+
+
+var (
+	urlStore = map[string]URL{}
+	mu sync.RWMutex
+)
+
 
 func main() {
 	http.HandleFunc("GET /health", healthHandler)
