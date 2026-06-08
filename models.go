@@ -1,25 +1,14 @@
 package main
 
 import (
-	"math/rand"
 	"time"
 )
 
-const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-
-
 type URL struct {
-	OriginalURL string
-	Clicks      int
-	CreatedAt   time.Time
-	ExpiresAt   time.Time
-	ShortCode   string
+	OriginalURL string `json:"original_url"`
+	Clicks      int		`json:"clicks"`
+	CreatedAt   time.Time	`json:"created_at"`
+	ExpiresAt   time.Time `json:"expires_at"`
+	ShortCode   string	`json:"short_code"`
 }
 
-func generateShortCode() string {
-	code := make([]byte, 6)
-	for i := range code {
-		code[i] = charset[rand.Intn(len(charset))]
-	}
-	return string(code)
-}
