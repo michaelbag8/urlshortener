@@ -128,3 +128,42 @@ func TestRedirectHandler_NotFound(t *testing.T) {
 		)
 	}
 }
+func TestRedirectHandler_Found(t *testing.T) {
+	
+	code := "abc123"
+	originalURL := "https://example.com"
+
+	mu.Lock()
+	urlStore = map[string]URL{
+		code: {
+			OriginalURL: originalURL,
+			Clicks:      0,
+		},
+	}
+	mu.Unlock()
+
+	req := httptest.NewRequest(http.MethodGet, "/"+code, nil)
+	req.SetPathValue("code", code)
+
+	rr := httptest.NewRecorder()
+
+	redirectHandler(rr, req)
+
+
+	if rr.Code != http.StatusFound {
+		t.Fatalf("expected status %d, got %d", http.StatusFound, rr.Code)
+	}
+
+	location := rr.Header().Get("Location")
+	if location != originalURL {
+		t.Errorf("expected Location header %q, got %q", originalURL, location)
+	}
+
+	mu.RLock()
+	storedURL := urlStore[code]
+	mu.RUnlock()
+
+	if storedURL.Clicks != 1 {
+		t.Errorf("expected clicks to be 1, got %d", storedURL.Clicks)
+	}
+}
